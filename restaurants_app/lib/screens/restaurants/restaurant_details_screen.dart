@@ -37,52 +37,25 @@ class _RestaurantDetailsScreenState extends State<RestaurantDetailsScreen> {
     final restaurantName = Uri.encodeComponent(widget.restaurant.name);
 
     try {
-      // Try 1: Android geo: URI scheme (most compatible)
-      final geoUrl = 'geo:$lat,$lon?q=$restaurantName';
-      Uri uri = Uri.parse(geoUrl);
+      final candidates = <Uri>[
+        Uri.parse('geo:$lat,$lon?q=$restaurantName'),
+        Uri.parse(
+          'https://www.google.com/maps/dir/?api=1&destination=$lat,$lon',
+        ),
+        Uri.parse('https://www.google.com/maps/search/?api=1&query=$lat,$lon'),
+      ];
 
-      if (await canLaunchUrl(uri)) {
-        await launchUrl(uri);
-        return;
+      for (final uri in candidates) {
+        final launched = await launchUrl(
+          uri,
+          mode: LaunchMode.externalApplication,
+        );
+        if (launched) return;
       }
 
-      // Try 2: Google Maps app URI scheme
-      final mapsAppUrl =
-          'https://www.google.com/maps/search/?api=1&query=$lat,$lon';
-      uri = Uri.parse(mapsAppUrl);
-
-      if (await canLaunchUrl(uri)) {
-        await launchUrl(uri);
-        return;
-      }
-
-      // Try 3: Standard Google Maps web URL
-      final webUrl =
-          'https://www.google.com/maps/dir/?api=1&destination=$lat,$lon';
-      uri = Uri.parse(webUrl);
-
-      if (await canLaunchUrl(uri)) {
-        await launchUrl(uri, mode: LaunchMode.externalApplication);
-        return;
-      }
-
-      // All methods failed
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('No maps app found. Please install Google Maps.'),
-          action: SnackBarAction(
-            label: 'Install',
-            onPressed: () {
-              // Open Play Store
-              launchUrl(
-                Uri.parse(
-                  'https://play.google.com/store/apps/details?id=com.google.android.apps.maps',
-                ),
-              );
-            },
-          ),
-        ),
+        const SnackBar(content: Text('Could not open Google Maps.')),
       );
     } catch (e) {
       if (!mounted) return;
