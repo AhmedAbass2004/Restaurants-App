@@ -33,6 +33,10 @@ dependencies:
   rxdart: ^0.28.0
   http: ^1.2.2
   shared_preferences: ^2.3.2
+  geolocator: ^14.0.1
+  flutter_map: ^8.2.2
+  latlong2: ^0.9.1
+  url_launcher: ^6.3.2
 
 dev_dependencies:
   flutter_test:

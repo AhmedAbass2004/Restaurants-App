@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
@@ -12,24 +13,40 @@ class ApiService {
   ApiService({http.Client? client}) : _client = client ?? http.Client();
 
   final http.Client _client;
+  static const Duration _timeout = Duration(seconds: 15);
 
   Future<Map<String, dynamic>> _get(String endpoint) async {
-    final uri = Uri.parse('${ApiConstants.baseUrl}$endpoint');
-    final response = await _client.get(uri, headers: _headers());
-    return _handleResponse(response);
+    try {
+      final uri = Uri.parse('${ApiConstants.baseUrl}$endpoint');
+      final response = await _client
+          .get(uri, headers: _headers())
+          .timeout(
+            _timeout,
+            onTimeout: () => throw TimeoutException('Request timeout'),
+          );
+      return _handleResponse(response);
+    } on TimeoutException {
+      throw Exception('Network request timeout - please check your connection');
+    }
   }
 
   Future<Map<String, dynamic>> _post(
     String endpoint,
     Map<String, dynamic> body,
   ) async {
-    final uri = Uri.parse('${ApiConstants.baseUrl}$endpoint');
-    final response = await _client.post(
-      uri,
-      headers: _headers(),
-      body: jsonEncode(body),
-    );
-    return _handleResponse(response);
+    try {
+      final uri = Uri.parse('${ApiConstants.baseUrl}$endpoint');
+      final response = await _client
+          .post(uri, headers: _headers(), body: jsonEncode(body),
+          )
+          .timeout(
+            _timeout,
+            onTimeout: () => throw TimeoutException('Request timeout'),
+          );
+      return _handleResponse(response);
+    } on TimeoutException {
+      throw Exception('Network request timeout - please check your connection');
+    }
   }
 
   Map<String, String> _headers() {
