@@ -4,6 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../models/restaurant.dart';
 import '../../services/location_service.dart';
+import 'restaurant_products_screen.dart';
 
 class RestaurantDetailsScreen extends StatefulWidget {
   final Restaurant restaurant;
@@ -97,7 +98,7 @@ class _RestaurantDetailsScreenState extends State<RestaurantDetailsScreen> {
                         ),
                       ],
                     ),
-                    child: Icon(Icons.restaurant, size: 60, color: Colors.teal),
+                    child: const Icon(Icons.restaurant, size: 60, color: Colors.teal),
                   ),
                   const SizedBox(height: 16),
                   Text(
@@ -118,6 +119,41 @@ class _RestaurantDetailsScreenState extends State<RestaurantDetailsScreen> {
               padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
+                  // View Products Button
+                  SizedBox(
+                    width: double.infinity,
+                    height: 56,
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (_) => RestaurantProductsScreen(
+                                  restaurant: widget.restaurant,
+                                ),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.menu_book),
+                      label: const Text(
+                        'View Products / Menu',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.orange,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
                   // Distance card
                   Card(
                     elevation: 2,
@@ -131,7 +167,7 @@ class _RestaurantDetailsScreenState extends State<RestaurantDetailsScreen> {
                         children: [
                           Row(
                             children: [
-                              Icon(
+                              const Icon(
                                 Icons.location_on,
                                 color: Colors.teal,
                                 size: 24,
@@ -183,7 +219,7 @@ class _RestaurantDetailsScreenState extends State<RestaurantDetailsScreen> {
                         children: [
                           Row(
                             children: [
-                              Icon(
+                              const Icon(
                                 Icons.map_outlined,
                                 color: Colors.orange,
                                 size: 24,
@@ -244,6 +280,7 @@ class _RestaurantDetailsScreenState extends State<RestaurantDetailsScreen> {
                   if (widget.restaurant.latitude != null &&
                       widget.restaurant.longitude != null)
                     SizedBox(
+                      width: double.infinity,
                       height: 56,
                       child: ElevatedButton.icon(
                         onPressed: _openDirections,
@@ -268,6 +305,7 @@ class _RestaurantDetailsScreenState extends State<RestaurantDetailsScreen> {
                   // Back button
                   const SizedBox(height: 12),
                   SizedBox(
+                    width: double.infinity,
                     height: 48,
                     child: OutlinedButton(
                       onPressed: () => Navigator.pop(context),
